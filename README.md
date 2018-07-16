@@ -44,11 +44,11 @@ cd dAFM
 3) Execute the ```src/main.py``` script using python after specifying the input values. It will train on training set and evaluate the average root mean square error on validation set. It will also save the model in created Accuracy folder. The example dataset is already included in the datasets folder.
 **Note:** The detailed description of the input values is mentioned in later section.
 ```
-python3 src/main.py --dataset Example --dataset_path Example/example.txt --skill_name skill_name --dafm dafm-afm No --save_model True
+python3 src/main.py --dataset Example --dataset_path Example/example.txt --skill_name skill_name --dafm fine-tuned No --save_model True
 ```
 4) It will use the load the saved model and evaluate the rmse on testing set. 
 ```
-python3 src/main.py --dataset Example --dataset_path datasets/example.txt --dafm dafm-afm No --load_model True --puser orig
+python3 src/main.py --dataset Example --dataset_path Example/example.txt --skill_name skill_name --dafm fine-tuned No --load_model True sub --puser orig
 ```
 
 ### Input Parameters
