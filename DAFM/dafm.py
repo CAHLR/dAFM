@@ -126,9 +126,9 @@ class DeepAFM:
 
         step_input = Input(batch_shape=(None, None, steps), name='step_input')
         if randomize:
-            Q_jk = TimeDistributed(Dense(q_jk_size, use_bias=False, trainable=qtrainable, activation=activation, kernel_initializer=self.custom_random), name="Q_jk")(step_input)
+            Q_jk = TimeDistributed(Dense(q_jk_size, use_bias=False, trainable=qtrainable, activation=activation, kernel_initializer=self.custom_random),trainable=qtrainable, name="Q_jk")(step_input)
         else:
-            Q_jk = TimeDistributed(Dense(skills, activation=activation, kernel_initializer=self.f(Q_jk_initialize), use_bias=False, trainable=qtrainable), name="Q_jk")(step_input)
+            Q_jk = TimeDistributed(Dense(skills, activation=activation, kernel_initializer=self.f(Q_jk_initialize), use_bias=False, trainable=qtrainable), trainable=qtrainable,name="Q_jk")(step_input)
 
         if dafm_type == "random-qjk-dense-normal" or dafm_type == "random-qjk-dense-uniform":
             Q_jk = TimeDistributed(Dense(skills, activation=activation_dense, use_bias=False, kernel_initializer=self.custom_random, trainable=True), name="Q_jk_dense")(Q_jk)
@@ -138,12 +138,12 @@ class DeepAFM:
             pass
 
         Qjk_mul_Bk = multiply([Q_jk, B_k])
-        sum_Qjk_Bk = TimeDistributed(Dense(1, activation='linear', trainable=False, kernel_initializer=initializers.Ones(), use_bias=False), name="sum_Qjk_Bk")(Qjk_mul_Bk)
+        sum_Qjk_Bk = TimeDistributed(Dense(1, activation='linear', trainable=False, kernel_initializer=initializers.Ones(), use_bias=False), trainable=False,name="sum_Qjk_Bk")(Qjk_mul_Bk)
 
         P_k = SimpleRNN(skills, kernel_initializer=initializers.Identity(), recurrent_initializer=initializers.Identity() , use_bias=False, trainable=False, activation='linear', return_sequences=True, name="P_k")(Q_jk)
 
         Qjk_mul_Pk_mul_Tk = multiply([Q_jk, P_k, T_k])
-        sum_Qjk_Pk_Tk = TimeDistributed(Dense(1, activation='linear', trainable=False, kernel_initializer=initializers.Ones(), use_bias=False), name="sum_Qjk_Pk_Tk")(Qjk_mul_Pk_mul_Tk)
+        sum_Qjk_Pk_Tk = TimeDistributed(Dense(1, activation='linear', trainable=False, kernel_initializer=initializers.Ones(), use_bias=False),trainable=False, name="sum_Qjk_Pk_Tk")(Qjk_mul_Pk_mul_Tk)
         Concatenate = concatenate([bias_layer, sum_Qjk_Bk, sum_Qjk_Pk_Tk])
 
         if not (theta_student=="False"):
@@ -160,7 +160,7 @@ class DeepAFM:
                 S_k = TimeDistributed(Dense(1, activation="linear", use_bias=False), name='S_k')(section_input)
             Concatenate = concatenate([Concatenate, S_k])
 
-        output = TimeDistributed(Dense(1, activation="sigmoid", trainable=False, kernel_initializer=initializers.Ones(), use_bias=False), name="output")(Concatenate)
+        output = TimeDistributed(Dense(1, activation="sigmoid", trainable=False, kernel_initializer=initializers.Ones(), use_bias=False), trainable=False, name="output")(Concatenate)
         if section == "onehot" and not (theta_student=="False"):
             model = Model(inputs=[virtual_input1, step_input, section_input, student_input], outputs=output)
         elif section == "onehot" and theta_student=="False":
