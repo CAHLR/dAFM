@@ -2,7 +2,7 @@
 
 This is a python implementation of the dAFM paper:
 
-Pardos, Z.A., Dadu, A. (accepted) dAFM: Fusing Psychometric and Connectionist Modeling for Q-matrix Refinement. To appear in the Journal of Educational Data Mining. [**pdf**](http://people.ischool.berkeley.edu/~zp/papers/dAFM_qmatrix_refinement.pdf)
+Pardos, Z.A., Dadu, A. (2018) dAFM: Fusing Psychometric and Connectionist Modeling for Q-matrix Refinement. Journal of Educational Data Mining. Vol 10(2), 1-27. [**pdf**](https://jedm.educationaldatamining.org/index.php/JEDM/article/download/314/97) 
 
 ### This repository contains:
 - dAFM: dynamic or deep Additive Factors Model
