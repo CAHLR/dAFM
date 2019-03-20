@@ -31,6 +31,13 @@ class DeepAFM:
         ans = K.mean(K.binary_crossentropy(y_true, y_pred), axis=-1) * K.mean(b, axis=-1)
         count =  K.not_equal(ans, 0).sum()
         return  ans.sum()/count
+    
+    def custom_bce(self, y_true, y_pred):
+        b = K.not_equal(y_true, -K.ones_like(y_true))
+        b = K.cast(b, dtype='float32')
+        ans = K.mean(K.binary_crossentropy(y_true, y_pred), axis=-1) * K.mean(b, axis=-1)
+        ans = K.cast(ans, dtype='float32')
+        return np.sum(ans)
 
     def custom_activation(self, x):
         if self.activation.split('-')[0] == "custom":
