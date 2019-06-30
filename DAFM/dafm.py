@@ -31,6 +31,13 @@ class DeepAFM:
         ans = K.mean(K.binary_crossentropy(y_true, y_pred), axis=-1) * K.mean(b, axis=-1)
         count =  K.not_equal(ans, 0).sum()
         return  ans.sum()/count
+    
+    def custom_bce(self, y_true, y_pred):
+        b = K.not_equal(y_true, -K.ones_like(y_true))
+        b = K.cast(b, dtype='float32')
+        ans = K.mean(K.binary_crossentropy(y_true, y_pred), axis=-1) * K.mean(b, axis=-1)
+        ans = K.cast(ans, dtype='float32')
+        return np.sum(ans)
 
     def custom_activation(self, x):
         if self.activation.split('-')[0] == "custom":
@@ -53,7 +60,7 @@ class DeepAFM:
             return K.cast_to_floatx(np.reshape(x, shape))
         return custom_init
 
-    def build(self, dafm_type="dafm-afm", optimizer="rmsprop", learning_rate=0.01, activation="linear", Q_jk_initialize=0, section="", section_count=0, model1="", stateful=False, theta_student="False", student_count=0):
+    def build(self, dafm_type="dafm-afm", optimizer="rmsprop", learning_rate=0.01, activation="linear", Q_jk_initialize=0, section="", section_count=0, model1="", stateful=False, theta_student="False", student_count=0, binary="False"):
 
         skills = np.shape(Q_jk_initialize)[1]
         steps = np.shape(Q_jk_initialize)[0]
@@ -126,17 +133,31 @@ class DeepAFM:
 
         step_input = Input(batch_shape=(None, None, steps), name='step_input')
         if randomize:
-            Q_jk = TimeDistributed(Dense(q_jk_size, use_bias=False, trainable=qtrainable, activation=activation, kernel_initializer=self.custom_random),trainable=qtrainable, name="Q_jk")(step_input)
+             if binary=="False":
+                Q_jk = TimeDistributed(Dense(q_jk_size, use_bias=False, activation=activation, kernel_initializer=self.custom_random), trainable=qtrainable ,name="Q_jk")(step_input)
+            else:
+                Q_jk = TimeDistributed(BinaryDense(q_jk_size, use_bias=False,  activation=activation, kernel_initializer=self.custom_random),trainable=qtrainable, name="Q_jk")(step_input)
         else:
-            Q_jk = TimeDistributed(Dense(skills, activation=activation, kernel_initializer=self.f(Q_jk_initialize), use_bias=False, trainable=qtrainable), trainable=qtrainable,name="Q_jk")(step_input)
+            if binary=="False":
+                Q_jk = TimeDistributed(Dense(skills, activation=activation, kernel_initializer=self.f(Q_jk_initialize), use_bias=False,trainable=qtrainable), trainable=qtrainable, name="Q_jk")(step_input)
+            else:   
+                Q_jk = TimeDistributed(BinaryDense(skills, activation=activation, kernel_initializer=self.f(Q_jk_initialize),trainable=qtrainable,
+                                use_bias=False), name="Q_jk", trainable=qtrainable)(step_input)
 
         if dafm_type == "random-qjk-dense-normal" or dafm_type == "random-qjk-dense-uniform":
-            Q_jk = TimeDistributed(Dense(skills, activation=activation_dense, use_bias=False, kernel_initializer=self.custom_random, trainable=True), name="Q_jk_dense")(Q_jk)
+            if binary =="False":
+                Q_jk = TimeDistributed(Dense(skills, activation=activation_dense, use_bias=False, kernel_initializer=self.custom_random, trainable=True), name="Q_jk_dense")(Q_jk)
+            else:
+                Q_jk = TimeDistributed(BinaryDense(skills, activation=activation_dense, use_bias=False, kernel_initializer=self.custom_random, trainable=True), name="Q_jk_dense")(Q_jk)
+
         elif dafm_type == "qjk-dense":
+            if binary =='False':
                 Q_jk = TimeDistributed(Dense(skills, activation=activation_dense, use_bias=False, kernel_initializer=initializers.Identity(), trainable=True), name="Q_jk_dense")(Q_jk)
+            else:
+                Q_jk = TimeDistributed(BinaryDense(skills, activation=activation_dense, use_bias=False, kernel_initializer=initializers.Identity(), trainable=True), name="Q_jk_dense")(Q_jk)
         else:
             pass
-
+        
         Qjk_mul_Bk = multiply([Q_jk, B_k])
         sum_Qjk_Bk = TimeDistributed(Dense(1, activation='linear', trainable=False, kernel_initializer=initializers.Ones(), use_bias=False), trainable=False,name="sum_Qjk_Bk")(Qjk_mul_Bk)
 

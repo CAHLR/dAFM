@@ -76,7 +76,8 @@ class KCModel:
         parser.add_argument('--skill_wise', nargs=1, type=str, default=["False"])
         parser.add_argument('--save_model', nargs=1, type=str, default=["False"])
         parser.add_argument('--load_model', nargs=2, type=str, default=["False", "sub"])
-
+        
+        parser.add_argument('--binary',nargs=1,type=str, default=["False"])
 
         args = parser.parse_args()
         args.dafm_params[2] = float(args.dafm_params[2])
@@ -244,6 +245,7 @@ class KCModel:
         initialize["activation"] = self.args.dafm_params[0]
         initialize["optimizer"] = self.args.dafm_params[1]
         initialize["learning_rate"] = self.args.dafm_params[2]
+        initialize["binary"] = self.args.binary[0]
         Q_jk_initialize = np.copy(initialize["Q_jk_initialize"])
         # if self.args.dafm[0].split('_')[-1] == "double":
         #     Q_jk_initialize = np.concatenate([Q_jk_initialize, Q_jk_initialize], axis=1)
@@ -342,7 +344,8 @@ class KCModel:
         initialize["activation"] = self.args.dafm_params[0]
         initialize["optimizer"] = self.args.dafm_params[1]
         initialize["learning_rate"] = self.args.dafm_params[2]
-
+        initialize["binary"] = self.args.binary[0]
+        
         Q_jk_initialize = np.copy(initialize["Q_jk_initialize"])
         # if self.args.dafm[0].split('_')[-1] == "double":
         #    Q_jk_initialize = np.concatenate([Q_jk_initialize, Q_jk_initialize], axis=1)
