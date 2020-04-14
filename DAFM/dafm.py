@@ -31,7 +31,7 @@ class DeepAFM:
         ans = K.mean(K.binary_crossentropy(y_true, y_pred), axis=-1) * K.mean(b, axis=-1)
         count =  K.not_equal(ans, 0).sum()
         return  ans.sum()/count
-    
+
     def custom_bce(self, y_true, y_pred):
         b = K.not_equal(y_true, -K.ones_like(y_true))
         b = K.cast(b, dtype='float32')
@@ -135,12 +135,12 @@ class DeepAFM:
         if randomize:
              if binary=="False":
                 Q_jk = TimeDistributed(Dense(q_jk_size, use_bias=False, activation=activation, kernel_initializer=self.custom_random), trainable=qtrainable ,name="Q_jk")(step_input)
-            else:
+             else:
                 Q_jk = TimeDistributed(BinaryDense(q_jk_size, use_bias=False,  activation=activation, kernel_initializer=self.custom_random),trainable=qtrainable, name="Q_jk")(step_input)
         else:
             if binary=="False":
                 Q_jk = TimeDistributed(Dense(skills, activation=activation, kernel_initializer=self.f(Q_jk_initialize), use_bias=False,trainable=qtrainable), trainable=qtrainable, name="Q_jk")(step_input)
-            else:   
+            else:
                 Q_jk = TimeDistributed(BinaryDense(skills, activation=activation, kernel_initializer=self.f(Q_jk_initialize),trainable=qtrainable,
                                 use_bias=False), name="Q_jk", trainable=qtrainable)(step_input)
 
@@ -157,7 +157,7 @@ class DeepAFM:
                 Q_jk = TimeDistributed(BinaryDense(skills, activation=activation_dense, use_bias=False, kernel_initializer=initializers.Identity(), trainable=True), name="Q_jk_dense")(Q_jk)
         else:
             pass
-        
+
         Qjk_mul_Bk = multiply([Q_jk, B_k])
         sum_Qjk_Bk = TimeDistributed(Dense(1, activation='linear', trainable=False, kernel_initializer=initializers.Ones(), use_bias=False), trainable=False,name="sum_Qjk_Bk")(Qjk_mul_Bk)
 
