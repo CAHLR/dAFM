@@ -2,7 +2,7 @@
 
 This is a python implementation of the dAFM paper:
 
-Pardos, Z.A., Dadu, A. (2018) dAFM: Fusing Psychometric and Connectionist Modeling for Q-matrix Refinement. Journal of Educational Data Mining. Vol 10(2), 1-27. [**pdf**](https://jedm.educationaldatamining.org/index.php/JEDM/article/download/314/97) 
+Pardos, Z.A., Dadu, A. (2018) dAFM: Fusing Psychometric and Connectionist Modeling for Q-matrix Refinement. Journal of Educational Data Mining. Vol 10(2), 1-27. [**pdf**](https://jedm.educationaldatamining.org/index.php/JEDM/article/download/314/97)
 
 ### This repository contains:
 - dAFM: dynamic or deep Additive Factors Model
@@ -19,14 +19,20 @@ Pardos, Z.A., Dadu, A. (2018) dAFM: Fusing Psychometric and Connectionist Modeli
 - scipy
 - sklearn
 - gensim
+- tensorflow
 - matlab.engine (for clustering on matlab)
+
+These dependencies may be installed from the requirements file by running the following command:
+```
+pip3 install -r requirements.txt
+```
 
 ### Dataset:
 
 Dataset should be tab-separated file. Training and test set will be generated on the basis of user-level split (except when using student information). It should have the following attributes:
 
 - **user_id**: unique id of student or user
-- **problem_id**: unique id of problem 
+- **problem_id**: unique id of problem
 - **skill_name**: skill associated with the problem
 - **correctness**: first attempt correctness of a particular response
 - **section**: section information (set of problems belong to a particular section)
@@ -41,12 +47,17 @@ git clone https://github.com/CAHLR/dAFM.git
 ```
 cd dAFM
 ```
-3) Execute the ```src/main.py``` script using python after specifying the input values. It will train on training set and evaluate the average root mean square error on validation set. It will also save the model in created Accuracy folder. The example dataset is already included in the datasets folder.
+
+3) Install required dependencies with the following command.
+```
+pip3 install -r requirements.txt
+```
+4) Execute the ```src/main.py``` script using python after specifying the input values. It will train on training set and evaluate the average root mean square error on validation set. It will also save the model in created Accuracy folder. The example dataset is already included in the datasets folder.
 **Note:** The detailed description of the input values is mentioned in later section.
 ```
 python3 src/main.py --dataset Example --dataset_path Example/example.txt --skill_name skill_name --dafm fine-tuned No --save_model True
 ```
-4) It will use the load the saved model and evaluate the rmse on testing set. 
+5) It will use the load the saved model and evaluate the rmse on testing set. 
 ```
 python3 src/main.py --dataset Example --dataset_path Example/example.txt --skill_name skill_name --dafm fine-tuned No --load_model True sub --puser orig
 ```
@@ -106,17 +117,17 @@ paramter2 | window_size | default:20, window size to be used for skip gram
 **rnn_params**| optional | values for dkt model training
 paramter| hidden_layer_size | default:100, number of nodes in hidden layer of dkt
 **clustering_params**| optional |  values for kmeans clustering, should be used with representation
-value1 | half, same, double, integer | no. of clusters (times the number of skills in existing skill model) 
+value1 | half, same, double, integer | no. of clusters (times the number of skills in existing skill model)
 value2 | euclidean, cosine | distance measure to be used for clustering cosine clustering can be done only using matlab engine
 
 **Predictive Model:**
 
 Arguement Name | Parameters | Description
 ----------------- | ------------- |--------
-**dafm** | required | To use dAFM model 
+**dafm** | required | To use dAFM model
 value1 | dafm-afm | same as AFM
 &nbsp;| fine-tuned | two time training model
-&nbsp;| round-fine-tuned | rounded off Q-matrix 
+&nbsp;| round-fine-tuned | rounded off Q-matrix
 &nbsp;| kcinitialize | train using Q-matrix initialization (all values at once)
 &nbsp;| random-uniform | Q-matrix initialization using uniform distribution
 &nbsp;| random-normal | Q-matrix initialization using normal distribution
@@ -152,14 +163,14 @@ Arguement Name | Parameters | Description
 **save_model**| optional | save the trained model
 value | False/True | True to save the model
 **load_model**| optional | to load the trained model
-value1 |False/True | True to load the saved model 
+value1 |False/True | True to load the saved model
 value2 | sub | load the model that is trained on subtrain
 &nbsp;| orig | load the model that is train on train (use only when puser is orig)
 **skill_wise**| optional | save the modified Q-matrix and its interpretation plot
 &nbsp;| | #ToDo
 
 
-### Directory Structure: 
+### Directory Structure:
 
 ```
 ├── Accuracy
@@ -214,4 +225,3 @@ value2 | sub | load the model that is trained on subtrain
     └── main.py
 ```
 #ToDo Add each file description
-
