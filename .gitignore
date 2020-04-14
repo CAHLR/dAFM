@@ -1,2 +1,4 @@
+# Added these so that models/datasets won't be commited everytime
+
 Accuracy
 datasets
