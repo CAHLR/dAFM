@@ -1,0 +1,9 @@
+pandas
+keras
+theano
+numpy
+scipy
+sklearn
+gensim
+matlab
+tensorflow
