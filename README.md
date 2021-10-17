@@ -26,7 +26,7 @@ These dependencies may be installed from the requirements file by running the fo
 ```
 pip3 install -r requirements.txt
 ```
-
+Python: Only version 3.5.2 is currently supported 
 ### Dataset:
 
 Dataset should be tab-separated file. Training and test set will be generated on the basis of user-level split (except when using student information). It should have the following attributes:
